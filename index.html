@@ -1,166 +1,129 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>한글 버튼</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>한글 버튼</title>
 
-<style>
-:root{
-  /* 스샷 느낌: 연회색 배경 + 흰 키캡 */
-  --bg:#d9d9db;        /* 전체 배경 */
-  --panel:#d9d9db;     /* 하단도 배경과 동일 톤 */
-  --key:#ffffff;       /* 버튼 배경 */
-  --keyText:#121212;   /* 버튼 글씨 */
-  --keyShadow1: rgba(0,0,0,0.12);
-  --keyShadow2: rgba(0,0,0,0.08);
-  --border: rgba(0,0,0,0.06);
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#d9d9db">
 
-  --barBtn:#f2f2f3;    /* 하단 작은 버튼 배경 */
-  --barBtnText:#111;
-  --barBox:#ffffff;    /* 선택/출력 박스 */
-  --barBoxText:#111;
-}
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js");
+      });
+    }
+  </script>
 
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{
-  margin:0;
-  height:100%;
-  background:var(--bg);
-  font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;
-  color:#111;
-}
+  <style>
+    :root{
+      --bg:#d9d9db;
+      --panel:#d9d9db;
+      --key:#ffffff;
+      --keyText:#121212;
+      --keyShadow1: rgba(0,0,0,0.12);
+      --keyShadow2: rgba(0,0,0,0.08);
+      --border: rgba(0,0,0,0.06);
+      --barBtn:#f2f2f3;
+      --barBtnText:#111;
+      --barBox:#ffffff;
+      --barBoxText:#111;
+    }
 
-.app{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    html,body{
+      margin:0;
+      height:100%;
+      background:var(--bg);
+      font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;
+    }
 
-/* ===== 메인 버튼 영역 ===== */
-.stage{
-  flex:1;
-  padding:10px;
-  display:flex;
-}
+    body{ padding-bottom:1px; }
 
-.grid{
-  flex:1;
-  display:grid;
-  gap:12px; /* 스샷처럼 여백 조금 더 */
-}
+    .app{
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
 
-.grid.consonant{
-  grid-template-columns:repeat(7,1fr);
-  grid-template-rows:repeat(2,1fr);
-}
+    .stage{
+      flex:1;
+      padding:10px;
+      display:flex;
+    }
 
-.grid.vowel{
-  grid-template-columns:repeat(7,1fr);
-  grid-template-rows:repeat(3,1fr);
-}
+    .grid{
+      flex:1;
+      display:grid;
+      gap:12px;
+    }
 
-.key{
-  border: 1px solid var(--border);
-  border-radius:18px;
-  background:var(--key);
-  color:var(--keyText);
-  font-weight:900;
+    .grid.consonant{
+      grid-template-columns:repeat(7,1fr);
+      grid-template-rows:repeat(2,1fr);
+    }
 
-  /* JS가 실제 버튼 크기에 맞춰 px로 설정 */
-  font-size:48px;
-  line-height:1;
+    .grid.vowel{
+      grid-template-columns:repeat(7,1fr);
+      grid-template-rows:repeat(3,1fr);
+    }
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
+    .key{
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:var(--key);
+      color:var(--keyText);
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 6px 12px var(--keyShadow1),0 1px 0 var(--keyShadow2);
+      user-select:none;
+    }
 
-  box-shadow:
-    0 6px 12px var(--keyShadow1),
-    0 1px 0 var(--keyShadow2);
+    .bottom{
+      background:var(--panel);
+      padding:6px 10px 10px;
+    }
 
-  user-select:none;
-  touch-action: manipulation;
-}
-.key:active{
-  transform: translateY(1px);
-  box-shadow:
-    0 4px 9px rgba(0,0,0,0.14),
-    0 1px 0 rgba(0,0,0,0.08);
-}
+    .row-top{
+      display:flex;
+      gap:10px;
+      height:44px;
+    }
 
-/* ===== 하단 바 ===== */
-.bottom{
-  background:var(--panel);
-  padding:6px 10px 10px;
-}
+    .small-btn{
+      border-radius:14px;
+      background:var(--barBtn);
+      font-weight:900;
+      padding:8px 12px;
+    }
 
-/* 줄 1 */
-.row-top{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  height:44px; /* 요청대로 얇게 유지 */
-}
+    .selected{
+      flex:1;
+      background:var(--barBox);
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:26px;
+      font-weight:900;
+    }
 
-.small-btn{
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius:14px;
-  background:var(--barBtn);
-  color:var(--barBtnText);
-  font-size:15px;
-  font-weight:900;
-  padding:8px 12px;
-  height:100%;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.10);
-  touch-action: manipulation;
-}
-.small-btn:active{ transform: translateY(1px); }
-
-.selected{
-  flex:1;
-  height:100%;
-  border-radius:14px;
-  background:var(--barBox);
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.10);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:26px;
-  font-weight:900;
-  line-height:1;
-  color:var(--barBoxText);
-}
-
-/* 줄 2 */
-.row-output{
-  margin-top:8px;
-  height:46px; /* 요청대로 얇게 유지 */
-  border-radius:14px;
-  background:var(--barBox);
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.10);
-  padding:6px 10px;
-
-  font-size:clamp(18px,4.2vw,32px);
-  font-weight:900;
-  line-height:1.1;
-  color:var(--barBoxText);
-
-  white-space:nowrap;
-  overflow:hidden;
-}
-
-/* ===== 가로모드 ===== */
-@media (orientation:landscape){
-  .stage{ padding:8px; }
-  .grid{ gap:10px; }
-  .row-top{ height:40px; }
-  .row-output{ height:42px; }
-  .selected{ font-size:24px; }
-}
-</style>
+    .row-output{
+      margin-top:8px;
+      height:46px;
+      background:var(--barBox);
+      border-radius:14px;
+      padding:6px 10px;
+      font-size:clamp(18px,4vw,32px);
+      font-weight:900;
+      white-space:nowrap;
+      overflow:hidden;
+    }
+  </style>
 </head>
 
 <body>
@@ -170,112 +133,57 @@ html,body{
   <div class="bottom">
     <div class="row-top">
       <button class="small-btn" id="backBtn">←</button>
-      <button class="small-btn" id="delOneBtn">⌫</button>
+      <button class="small-btn" id="delBtn">⌫</button>
       <button class="small-btn" id="clearBtn">지움</button>
-      <div class="selected" id="selectedBox"></div>
+      <div class="selected" id="selected"></div>
     </div>
-    <div class="row-output" id="outputBox"></div>
+    <div class="row-output" id="output"></div>
   </div>
 </div>
 
 <script>
 const consonants=["ㄱ","ㄴ","ㄷ","ㄹ","ㅁ","ㅂ","ㅅ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
 const vowels=["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"];
-
 const choseong=["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
-const jungseong=vowels;
 
-let screen="consonant";
+let screen="c";
 let pending="";
-let output="";
+let text="";
 
 const stage=document.getElementById("stage");
-const selectedBox=document.getElementById("selectedBox");
-const outputBox=document.getElementById("outputBox");
+const sel=document.getElementById("selected");
+const out=document.getElementById("output");
 
 function compose(c,v){
-  const ci=choseong.indexOf(c);
-  const vi=jungseong.indexOf(v);
-  if(ci<0||vi<0)return c+v;
-  return String.fromCharCode(0xAC00+(ci*21+vi)*28);
-}
-
-function fitKeyFont(){
-  const keys = stage.querySelectorAll(".key");
-  for (const k of keys){
-    const w = k.clientWidth;
-    const h = k.clientHeight;
-    if (!w || !h) continue;
-    const base = Math.min(w, h);
-
-    // 버튼의 대부분을 글자가 차지하도록 (조금 더 크게)
-    let size = base * 0.86;            // 핵심: 크게
-    const min = 18;
-    const max = base * 0.94;           // 너무 꽉 차서 잘리는 것 방지
-    if (size < min) size = min;
-    if (size > max) size = max;
-
-    k.style.fontSize = Math.round(size) + "px";
-    k.style.lineHeight = "1";
-  }
+  return String.fromCharCode(0xAC00+(choseong.indexOf(c)*21+vowels.indexOf(v))*28);
 }
 
 function render(){
   stage.innerHTML="";
-  selectedBox.textContent=pending;
-  outputBox.textContent=output;
+  sel.textContent=pending;
+  out.textContent=text;
 
   const grid=document.createElement("div");
-  grid.className="grid "+(screen==="consonant"?"consonant":"vowel");
+  grid.className="grid "+(screen==="c"?"consonant":"vowel");
 
-  (screen==="consonant"?consonants:vowels).forEach(ch=>{
-    const b=document.createElement("button");
+  (screen==="c"?consonants:vowels).forEach(ch=>{
+    const b=document.createElement("div");
     b.className="key";
     b.textContent=ch;
     b.onclick=()=>{
-      if(screen==="consonant"){
-        pending=ch;
-        screen="vowel";
-      }else{
-        output+=compose(pending,ch);
-        pending="";
-        screen="consonant";
-      }
+      if(screen==="c"){pending=ch;screen="v";}
+      else{text+=compose(pending,ch);pending="";screen="c";}
       render();
     };
     grid.appendChild(b);
   });
 
   stage.appendChild(grid);
-  requestAnimationFrame(fitKeyFont);
 }
 
-document.getElementById("backBtn").onclick=()=>{
-  if(screen==="vowel"){
-    pending="";
-    screen="consonant";
-    render();
-  }
-};
-
-document.getElementById("delOneBtn").onclick=()=>{
-  if(pending){
-    pending="";
-    screen="consonant";
-  }else{
-    output=[...output].slice(0,-1).join("");
-  }
-  render();
-};
-
-document.getElementById("clearBtn").onclick=()=>{
-  pending="";
-  output="";
-  screen="consonant";
-  render();
-};
-
-window.addEventListener("resize", () => requestAnimationFrame(fitKeyFont));
+document.getElementById("backBtn").onclick=()=>{pending="";screen="c";render();};
+document.getElementById("delBtn").onclick=()=>{text=[...text].slice(0,-1).join("");render();};
+document.getElementById("clearBtn").onclick=()=>{text="";pending="";render();};
 
 render();
 </script>
